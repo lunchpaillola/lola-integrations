@@ -19,7 +19,7 @@ class ContentfulIntegration extends IntegrationBase {
             description: 'Contentful',
             category: 'Sales & CRM, Marketing',
             detailsUrl: 'https://contentful.com',
-            icon: 'https://uploads-ssl.webflow.com/5eed6e6fe625d140525c5769/667f99011545aa63fa1c51c4_Contentstack_idklmA0DLc_9.png',
+            icon: 'https://asset.brandfetch.io/idHHabFFo2/idLkQEYlr8.svg',
         },
         hasUserConfig: true,
     });
