@@ -1,38 +1,39 @@
 const { get, IntegrationBase, Options } = require('@friggframework/core');
-const { Definition: HubSpotModule } = require('@friggframework/api-module-hubspot');
+const {
+    Definition: HubSpotModule,
+} = require('@friggframework/api-module-hubspot');
 
 class HubSpotIntegration extends IntegrationBase {
     static Config = {
         name: 'hubspot',
         version: '1.0.0',
         supportedVersions: ['1.0.0'],
-        events: ['SEARCH_DEALS'],
+        events: ['LIST_COMPANIES'],
     };
 
-    static Options =
-        new Options({
-            module: HubSpotModule,
-            integrations: [HubSpotModule],
-            display: {
-                name: 'HubSpot',
-                description: 'Sales & CRM, Marketing',
-                category: 'Sales & CRM, Marketing',
-                detailsUrl: 'https://hubspot.com',
-                icon: 'https://friggframework.org/assets/img/hubspot.jpeg',
-            },
-            hasUserConfig: true,
-        });
+    static Options = new Options({
+        module: HubSpotModule,
+        integrations: [HubSpotModule],
+        display: {
+            name: 'HubSpot',
+            description: 'Sales & CRM, Marketing',
+            category: 'Sales & CRM, Marketing',
+            detailsUrl: 'https://hubspot.com',
+            icon: 'https://friggframework.org/assets/img/hubspot.jpeg',
+        },
+        hasUserConfig: true,
+    });
 
     static modules = {
         hubspot: HubSpotModule,
-    }
+    };
 
     /**
      * HANDLE EVENTS
      */
     async receiveNotification(notifier, event, object = null) {
-        if (event === 'SEARCH_DEALS') {
-            return this.target.api.searchDeals(object);
+        if (event === 'LIST_COMPANIES') {
+            return this.target.api.listCompanies(object);
         }
     }
 
@@ -40,23 +41,23 @@ class HubSpotIntegration extends IntegrationBase {
      * ALL CUSTOM/OPTIONAL METHODS FOR AN INTEGRATION MANAGER
      */
     async getSampleData() {
-        const res = await this.target.api.searchDeals()
-        console.log(res.results.length)
-        const formatted = res.results.map(deal => {
-            const formattedDeal = {
-                id: deal.id,
-                name: deal.properties.dealname,
-                dealStage: deal.properties.dealstage,
-                daysToClose: deal.properties.days_to_close,
-                createdAt: deal.createdAt,
-                closeDate: deal.properties.closedate,
-            }
-
-
-            return formattedDeal
-        })
-        return {data: formatted}
-
+        try {
+            const res = await this.target.api.listCompanies();
+            const formatted = res.results.map((company) => {
+                const formattedCompany = {
+                    id: company.id,
+                    name: company.properties.name,
+                    domain: company.properties.domain,
+                    createdAt: company.createdAt,
+                    lastModified: company.properties.hs_lastmodifieddate,
+                };
+                return formattedCompany;
+            });
+            return { data: formatted };
+        } catch (error) {
+            console.error('Error fetching sample data:', error);
+            return { data: [], error: error.message || 'An error occurred' };
+        }
     }
 
     /**
@@ -81,7 +82,7 @@ class HubSpotIntegration extends IntegrationBase {
     }
 
     async getConfigOptions() {
-        const options = {}
+        const options = {};
         return options;
     }
 }
