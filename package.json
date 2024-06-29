@@ -12,5 +12,8 @@
   "scripts": {
     "start": "concurrently \"cd backend && npm run backend-start\" \"cd frontend && npm run frontend-start\"",
     "test": "npm test -workspaces"
+  },
+  "dependencies": {
+    "mongodb": "^6.8.0"
   }
 }
